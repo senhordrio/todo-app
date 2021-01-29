@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { CheckIcon, CloseIcon } from '@chakra-ui/icons'
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
+import { CardTask } from './CardTask'
+import { Navbar } from './NavBar'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+	const [array, setArray] = useState([])
+
+	useEffect(() => {
+		fetch('https://jsonplaceholder.typicode.com/todos')
+			.then((response) => response.json())
+			.then((json) => setArray(json))
+	}, [])
+
+	const listTodoCards = (
+		todos: Array<{
+			id: number
+			title: string
+			content: string
+			completed: boolean
+		}>,
+	) => {
+		if (todos !== null) {
+			return todos.map((todo) => (
+				<CardTask
+					key={todo.id}
+					title={todo.title}
+					content={todo.content}
+					icon={todo.completed ? <CheckIcon /> : <CloseIcon />}
+				/>
+			))
+		}
+	}
+
+	return (
+		<Router>
+			<Navbar title='TODO App' />
+			{listTodoCards(array)}
+		</Router>
+	)
 }
-
-export default App;
